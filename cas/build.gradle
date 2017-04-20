@@ -1,3 +1,5 @@
+import static org.apache.tools.ant.taskdefs.condition.Os.*
+
 apply plugin: 'pancakes-library'
 apply plugin: 'org.springframework.boot'
 apply from: 'http://dl.bintray.com/scalding/generic/waroverlay.gradle'
@@ -78,7 +80,11 @@ processResources {
 task copyConfig(type: Copy) {
     println "Copying configuration to /etc/cas/config"
     from "${project.rootDir}/etc/cas/config"
-    into 'c:/etc/cas/config'
+    if(isFamily(FAMILY_WINDOWS)) {
+        into 'c:/etc/cas/config'
+    } else {
+        into '/etc/cas/config'
+    }
 }
 
 war {
