@@ -18,7 +18,10 @@ buildscript {
     }
 }
 
-group 'com.infusionsoft'
+allprojects {
+    group 'com.infusionsoft'
+    apply plugin: 'pancakes-library'
+}
 
 subprojects {
     apply plugin: 'pancakes-library'
