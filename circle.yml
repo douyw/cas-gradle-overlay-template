@@ -9,6 +9,7 @@ machine:
 dependencies:
   pre:
     - curl "https://storage.googleapis.com/circle-scripts/latest/init.sh" | bash
+    - sudo mkdir -p /etc/cas/config
   override:
 #    - ${HOME}/bin/circle-install mvn 3.3.3 ${M2_HOME}
 #    - ${MVN} install -T1C -Dmaven.test.skip.exec=true
