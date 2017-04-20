@@ -11,10 +11,6 @@ buildscript {
             }
         }
     }
-//    repositories {
-//        mavenLocal()
-//        jcenter()
-//    }
     dependencies {
         classpath "org.bitbucket.b_c:jose4j:0.5.2"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.'springboot.version'}"
@@ -22,10 +18,7 @@ buildscript {
     }
 }
 
-apply plugin: 'pancakes-library'
-
 group 'com.infusionsoft'
-version = "${project.'cas.version'}.0-SNAPSHOT"
 
 subprojects {
     task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
