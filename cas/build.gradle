@@ -1,4 +1,3 @@
-import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 apply plugin: 'pancakes-library'
 apply plugin: 'org.springframework.boot'
@@ -6,22 +5,6 @@ apply from: 'http://dl.bintray.com/scalding/generic/waroverlay.gradle'
 apply from: 'https://raw.githubusercontent.com/apereo/cas/v5.1.0-RC3/gradle/overrides.gradle'
 
 version = "${project.'cas.version'}.0-SNAPSHOT"
-
-//buildscript {
-//    repositories {
-//        maven {
-//            url 'https://infusionsoft.jfrog.io/infusionsoft/mvn-clean'
-//            credentials {
-//                username System.properties['externalProxyRepositoryUsername']
-//                password System.properties['externalProxyRepositoryPassword']
-//            }
-//        }
-//    }
-//    dependencies {
-//        classpath 'com.infusionsoft.pancakes:pancakes-google-cloud-build-plugin:3.+'
-//    }
-//}
-
 
 bootRepackage {
     enabled = false
@@ -80,15 +63,11 @@ processResources {
 task copyConfig(type: Copy) {
     println "Copying configuration to /etc/cas/config"
     from "${project.rootDir}/etc/cas/config"
-    if(isFamily(FAMILY_WINDOWS)) {
-        into 'c:/etc/cas/config'
-    } else {
-        into '/etc/cas/config'
-    }
+    into '/etc/cas/config'
 }
 
 war {
-    dependsOn copyConfig
+//    dependsOn copyConfig
     baseName 'cas'
     archiveName 'cas.war'
     includeWarJars = true
