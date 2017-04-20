@@ -24,8 +24,8 @@ deployment:
   devSnapshot:
     branch: circle
     commands:
-      - sudo pancakes_deployment cas
+      - sudo ~/bin/pancakes_deployment cas
   release:
     tag: /v[0-9]+(\.[0-9]+)*/
     commands:
-      - sudo pancakes_deployment cas
+      - sudo ~/bin/pancakes_deployment cas
