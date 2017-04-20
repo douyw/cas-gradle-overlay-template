@@ -21,9 +21,11 @@ test:
 #    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
 #    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
 deployment:
-  master:
+  devSnapshot:
     branch: circle
     commands:
-      - git config user.email "cd@infusionsoft.com"
-      - git config user.name "CircleCI"
-#      - ${MVN} release:prepare release:perform --batch-mode
+      - pancakes_deployment cas
+  release:
+    tag: /v[0-9]+(\.[0-9]+)*/
+    commands:
+      - pancakes_deployment cas
