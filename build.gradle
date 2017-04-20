@@ -24,7 +24,8 @@ buildscript {
 
 apply plugin: 'pancakes-library'
 
-group 'com.infusionsoft.cas'
+group 'com.infusionsoft'
+version = "${project.'cas.version'}.0-SNAPSHOT"
 
 subprojects {
     task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}

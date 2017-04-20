@@ -4,8 +4,6 @@ apply plugin: 'org.springframework.boot'
 apply from: 'http://dl.bintray.com/scalding/generic/waroverlay.gradle'
 apply from: 'https://raw.githubusercontent.com/apereo/cas/v5.1.0-RC3/gradle/overrides.gradle'
 
-version = "${project.'cas.version'}.0-SNAPSHOT"
-
 bootRepackage {
     enabled = false
 }
