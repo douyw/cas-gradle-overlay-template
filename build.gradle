@@ -21,6 +21,7 @@ buildscript {
 group 'com.infusionsoft'
 
 subprojects {
+    apply plugin: 'pancakes-library'
     task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
     task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {}
 }
