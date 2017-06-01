@@ -1,6 +1,8 @@
 $(document).ready(function () {
     $("#username").focus();
 
+    $('#forgotPassword').click(submitForgotPasswordForm);
+
     //Validate the form
     $('#loginForm').validate(
         {

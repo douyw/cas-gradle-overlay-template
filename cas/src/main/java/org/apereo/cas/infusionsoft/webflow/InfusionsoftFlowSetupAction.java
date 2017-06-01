@@ -18,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class InfusionsoftFlowSetupAction extends AbstractAction {
@@ -48,6 +49,8 @@ public class InfusionsoftFlowSetupAction extends AbstractAction {
             String registrationParam  = context.getRequestParameters().get("registration");
             if (StringUtils.isNotBlank(registrationParam) && servicesManager.findServiceBy(registrationParam) != null) {
                 registrationUrl = registrationParam;
+            } else {
+                registrationUrl = registrationUrl + "?returnUrl=" + URLEncoder.encode(service.getOriginalUrl(), "UTF-8");
             }
         }
 

@@ -31,7 +31,7 @@ import java.io.IOException;
  * Controller that backs the new user registration and "forgot password" flows.
  */
 @Controller
-@RequestMapping(value = {"/registration", "/app/registration"})
+@RequestMapping(value = {"/registration", "/app/registration", "/password"})
 public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
@@ -347,8 +347,9 @@ public class RegistrationController {
      * @return view
      */
     @RequestMapping("/forgot")
-    public String forgot(Model model, @RequestParam(required = false) String username) {
+    public String forgot(Model model, @RequestParam(required = false) String username, @RequestParam(required = false) String service) {
         model.addAttribute("username", username);
+        model.addAttribute("service", service);
         model.addAttribute("supportPhoneNumbers", infusionsoftConfigurationProperties.getSupportPhoneNumbers());
         return "registration/forgot";
     }
@@ -363,9 +364,10 @@ public class RegistrationController {
      * @return view
      */
     @RequestMapping("/recover")
-    public String recover(Model model, String username, String recoveryCode) {
+    public String recover(Model model, String username, String recoveryCode, @RequestParam(required = false) String service) {
         log.info("password recovery request for email " + username);
         model.addAttribute("username", username);
+        model.addAttribute("service", service);
         model.addAttribute("supportPhoneNumbers", infusionsoftConfigurationProperties.getSupportPhoneNumbers());
         recoveryCode = StringUtils.trim(recoveryCode);
 
@@ -387,7 +389,7 @@ public class RegistrationController {
             User user = userService.findEnabledUser(username);
 
             if (user != null) {
-                userService.resetPassword(user);
+                userService.resetPassword(user, service);
                 log.info("password recovery code created for user " + user.getId());
             } else {
                 log.warn("password recovery attempted for non-existent user: " + username);
@@ -414,7 +416,8 @@ public class RegistrationController {
      * @return view
      */
     @RequestMapping("/reset")
-    public String reset(Model model, String recoveryCode, String password1, String password2, HttpServletRequest request, HttpServletResponse response) {
+    public String reset(Model model, String recoveryCode, String password1, String password2, @RequestParam(required = false) String service, HttpServletRequest request, HttpServletResponse response) {
+        model.addAttribute("service", service);
         model.addAttribute("supportPhoneNumbers", infusionsoftConfigurationProperties.getSupportPhoneNumbers());
 
         User user = userService.findUserByRecoveryCode(recoveryCode);
@@ -439,11 +442,16 @@ public class RegistrationController {
 
             return "registration/reset";
         } else {
-            if (user != null) {
-                autoLoginService.autoLogin(user.getUsername(), request, response);
-            }
+            autoLoginService.autoLogin(user.getUsername(), request, response);
 
-            return "redirect:" + defaultRedirectUrl;
+            // Redirect directly to the login URL, which will redirect to the redirectUrl with a service ticket
+            String redirectUrl = defaultRedirectUrl;
+            if (getServiceByUrl(service) != null) {
+                redirectUrl = service;
+            }
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(casConfigurationProperties.getServer().getLoginUrl());
+            uriBuilder.queryParam("service", redirectUrl);
+            return "redirect:" + uriBuilder.toUriString();
         }
     }
 
