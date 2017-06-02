@@ -536,7 +536,7 @@ a.list-group-item:hover, a.list-group-item:active {
     width: 80px;
 }
 
-input.form-control {
+input.form-control, select.form-control {
     height: 40px;
     font-size: 16px;
     margin-bottom: 5px;
@@ -595,4 +595,33 @@ input.form-control {
 
 .legal-section:last-child {
     border-bottom: none;
+}
+
+input, input[type="password"], input#password, input[type="email"], select, select.form-control {
+    height: 40px;
+    border: 1px solid #D0D2D3;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+
+#showHidePassword {
+    position: absolute;
+    top: -22px;
+    right: 0;
+    color: #58A1D8;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+#showPassword, #hidePassword {
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+}
+
+.form-group {
+    margin-bottom: 27px;
 }

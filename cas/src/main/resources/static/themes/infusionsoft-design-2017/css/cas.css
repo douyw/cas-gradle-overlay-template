@@ -57,12 +57,7 @@ body {
     }
 }
 
-input[type="email"],
-input[type="password"] {
-    padding: 8px;
-}
-
-.ic-envelope, .ic-lock, .login-footer {
+.login-footer {
     display: none;
     background: none;
 }

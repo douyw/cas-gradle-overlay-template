@@ -13,8 +13,7 @@ function wrapCriteriaPart(skipWrap, message) {
 $(document).ready(function () {
 
     jQuery.validator.addMethod("password", function (value, element) {
-        console.log('password validate');
-        return this.optional(element) || value.length >= 7 && /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value);
+        return this.optional(element) || checkPassword(value);
     }, "Doesn't meet the criteria.");
 
     //Validate the form
@@ -23,10 +22,6 @@ $(document).ready(function () {
             errorElement: "span",
             errorClass: "help-block",
             errorPlacement: function (error, element) {
-                console.log('errorPlacement');
-                console.log(error);
-                console.log(element);
-
                 element.after('<span class="is-icon is-icon-error form-control-feedback"><img src="/infusionsoft/img/ic-message-danger.svg" width="4" height="16"></span>');
                 element.after(error);
             },
@@ -54,11 +49,7 @@ $(document).ready(function () {
                 password1: {
                     required: "Password is required.",
                     password: function (params, element) {
-                        console.log('password custom');
-                        console.log(params);
-                        console.log(element);
                         var currPass = $(element).val();
-                        console.log(currPass);
 
                         var mobileMessage = '' +
                             wrapCriteriaPart(checkPasswordLength(currPass), 'At least 7 characters') + ', ' +
@@ -77,8 +68,6 @@ $(document).ready(function () {
             },
             highlight: function (element) {
                 //element is the input failing validation
-                console.log('highlight');
-                console.log(element);
 
                 //Unhide error message
                 $(element).next().removeClass("hidden");
@@ -95,10 +84,6 @@ $(document).ready(function () {
             },
             success: function (element) {
                 //element is the error element created by the framework
-                console.log('success');
-                console.log(element);
-                console.log($(element).next());
-                console.log($(element).next().next());
 
                 $(element).closest('.form-group').addClass('has-success has-feedback');
                 $(element).closest('.form-group').removeClass('has-error');
@@ -107,8 +92,6 @@ $(document).ready(function () {
                 $(element).addClass("hidden");
 
                 //remove span icon error classes
-                console.log("remove is-icon-error on");
-                console.log($(element).next());
                 $(element).next().removeClass('is-icon-error form-control-feedback');
                 $(element).next().html('<img src="/infusionsoft/img/ic-message-success.svg" width="16" height="16">');
 

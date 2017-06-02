@@ -46,12 +46,11 @@
                 <input type="hidden" name="app_version" th:value="${appVersion}"/>
 
                 <div class="row signUpRow">
-                    <p>Don't have an account? <a th:href="@{${registrationUrl}}">Sign Up</a></p>
+                    <p><th:block th:text="#{login.noUser}"></th:block> <a th:href="@{${registrationUrl}}" th:text="#{login.signUp}"></a></p>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-10">
-                        <span class="ic-envelope"></span>
                         <input class="required form-control"
                                id="username"
                                size="25"
@@ -59,20 +58,27 @@
                                type="email"
                                th:field="*{username}"
                                th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                               placeholder="Email Address"/>
+                               th:placeholder="#{placeholder.username}"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-10">
-                        <span class="ic-lock"></span>
-                        <input class="required form-control"
-                               id="password"
-                               size="25"
-                               tabindex="2"
-                               type="password"
-                               th:field="*{password}"
-                               th:accesskey="#{screen.welcome.label.password.accesskey}"
-                               placeholder="Password"/>
+                        <div style="position: relative;">
+                            <input class="required form-control"
+                                   id="password"
+                                   size="25"
+                                   tabindex="2"
+                                   type="password"
+                                   th:field="*{password}"
+                                   th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                   th:placeholder="#{placeholder.password}"/>
+                            <div id="showHidePassword">
+                                <img id="showPassword" th:src="@{/infusionsoft/img/visibility.svg}" th:alt-title="#{password.show}"/>
+                                <span id="showPasswordLabel" th:text="#{password.show}"></span>
+                                <img id="hidePassword" style="display: none" th:src="@{/infusionsoft/img/visibility-off.svg}" th:alt-title="#{password.hide}"/>
+                                <span id="hidePasswordLabel" style="display: none" th:text="#{password.hide}"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -113,6 +119,7 @@
 
 <div layout:fragment="local_script">
     <script type="text/javascript" th:src="@{/infusionsoft/js/login.js}"></script>
+    <script type="text/javascript" th:src="@{/infusionsoft/js/password-utils.js}"></script>
 </div>
 </body>
 </html>

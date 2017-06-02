@@ -67,28 +67,6 @@ h2 {
     margin: 0 auto;
     padding-top: 10px;
 }
-input[type="email"],
-input[type="password"] {
-    padding-left: 40px;
-}
-.ic-envelope {
-    height: 14px;
-    width: 20px;
-    background: url(../img/ic-envelope.svg) 0 0 no-repeat;
-    position: absolute;
-    display: block;
-    left: 27px;
-    top: 13px;
-}
-.ic-lock {
-    height: 19px;
-    width: 15px;
-    background: url(../img/ic-lock.svg) 0 0 no-repeat;
-    position: absolute;
-    display: block;
-    left: 27px;
-    top: 10px;
-}
 img.iconAd {
     display: none;
     width: 275px;

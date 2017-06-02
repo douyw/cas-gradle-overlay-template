@@ -56,14 +56,6 @@
             cursor: pointer;
         }
 
-        input, input[type="password"], input[type="email"], select {
-            height: 40px;
-            border: 1px solid #D0D2D3;
-            border-radius: 5px;
-            background-color: #FFFFFF;
-            padding: 10px 8px;
-        }
-
         input[type="checkbox"] {
             margin: 0 8px 0 0;
             height: unset;
@@ -76,24 +68,6 @@
 
         #lastNameGroup {
             padding-left: 8px;
-        }
-
-        #showHide {
-            position: absolute;
-            top: -22px;
-            right: 0;
-            color: #58A1D8;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-        }
-
-        #showPassword, #hidePassword {
-            margin-right: 12px;
-            width: 16px;
-            height: 16px;
         }
 
         #securityQuestionGroup {
@@ -199,21 +173,22 @@
 
                     <section id="names">
                         <div class="form-group" id="firstNameGroup">
-                            <input type="text" id="firstName" tabindex="1" th:placeholder="#{user.firstName.label}" th:field="*{firstName}"/>
+                            <input type="text" id="firstName" name="firstName" class="form-control" tabindex="1" th:placeholder="#{user.firstName.label}" th:field="*{firstName}"/>
                         </div>
                         <div class="form-group" id="lastNameGroup">
-                            <input type="text" id="lastName" tabindex="2" th:placeholder="#{user.lastName.label}" th:field="*{lastName}"/>
+                            <input type="text" id="lastName" name="lastName" class="form-control" tabindex="2" th:placeholder="#{user.lastName.label}" th:field="*{lastName}"/>
                         </div>
                     </section>
                     <div class="form-group">
-                        <input type="text" id="username" name="username" tabindex="3" th:value="*{username}" th:placeholder="#{registration.form.email}"/>
+                        <input type="text" id="username" name="username" class="form-control" tabindex="3" th:value="*{username}" th:placeholder="#{placeholder.username}"/>
                     </div>
                     <div class="form-group">
-                        <input type="password" id="password" name="password" autocomplete="off" tabindex="4" th:placeholder="#{registration.form.password}"/>
-                        <div id="showHide">
-                            <img id="showPassword" th:src="@{/infusionsoft/img/visibility.svg}" th:alt-title="#{Show}"/>
-                            <img id="hidePassword" style="display: none" th:src="@{/infusionsoft/img/visibility-off.svg}" th:alt-title="#{Hide}"/>
-                            <span id="showHideLabel" th:text="#{Show}"></span>
+                        <input type="password" id="password" name="password" class="form-control" autocomplete="off" tabindex="4" th:placeholder="#{registration.form.password}"/>
+                        <div id="showHidePassword">
+                            <img id="showPassword" th:src="@{/infusionsoft/img/visibility.svg}" th:alt-title="#{password.show}"/>
+                            <span id="showPasswordLabel" th:text="#{password.show}"></span>
+                            <img id="hidePassword" style="display: none" th:src="@{/infusionsoft/img/visibility-off.svg}" th:alt-title="#{password.hide}"/>
+                            <span id="hidePasswordLabel" style="display: none" th:text="#{password.hide}"></span>
                         </div>
                     </div>
 
@@ -225,7 +200,7 @@
                     </ul>
 
                     <div class="form-group" id="securityQuestionGroup">
-                        <select id="securityQuestionId" name="securityQuestionId" tabindex="5">
+                        <select id="securityQuestionId" name="securityQuestionId" class="form-control" tabindex="5">
                             <option value="" disabled selected th:text="#{registration.form.security.question.placeholder}"></option>
                             <th:block th:each="question : ${securityQuestions}">
                                 <option th:value="${question.id}" th:text="${question.question}"></option>
@@ -233,7 +208,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <input id="securityQuestionAnswer" name="securityQuestionAnswer" th:placeholder="#{registration.form.security.answer}" tabindex="6"/>
+                        <input id="securityQuestionAnswer" name="securityQuestionAnswer" class="form-control" th:placeholder="#{registration.form.security.answer}" tabindex="6"/>
                     </div>
 
                     <div class="form-group">
@@ -274,12 +249,14 @@
 </div>
 </th:block>
 
-<script type="text/javascript" layout:fragment="local_script" th:inline="javascript">
+<div layout:fragment="local_script">
+    <script type="text/javascript" th:src="@{/infusionsoft/js/password-utils.js}"></script>
+<script type="text/javascript" th:inline="javascript">
     $(document).ready(function () {
 
         document.getElementById('eula').addEventListener("click", checkTheEula);
         document.getElementById('acceptTerms').addEventListener("click", acceptTerms);
-        document.getElementById('showHide').addEventListener("click", togglePasswordVisible);
+        document.getElementById('showHidePassword').addEventListener("click", togglePasswordVisible);
 
         initLightBox();
     });
@@ -318,24 +295,6 @@
         document.getElementById('eula').removeEventListener("click", checkTheEula);
     }
 
-    function togglePasswordVisible() {
-        var showPassword = document.getElementById("showPassword");
-        var hidePassword = document.getElementById("hidePassword");
-        var showHideLabel = document.getElementById("showHideLabel");
-        var password = document.getElementById("password");
-        if (password.type === 'text') {
-            showPassword.style.display = '';
-            hidePassword.style.display = 'none';
-            showHideLabel.innerText = 'Show';
-            password.type = 'password';
-        } else {
-            showPassword.style.display = 'none';
-            hidePassword.style.display = '';
-            showHideLabel.innerText = 'Hide';
-            password.type = 'text';
-        }
-    }
-
     function resetCheckPassword() {
         $("#pw_length").css({"list-style-image": ''});
         $("#pw_number").css({"list-style-image": ''});
@@ -346,16 +305,16 @@
         var currPass = $('#password').val();
         var chechmarkImage = "url('" + [[@{/infusionsoft/img/checkmark.png}]] + "')";
         resetCheckPassword();
-        if (currPass.length >= 7) {
+        if (checkPasswordLength(currPass)) {
             $("#pw_length").css({"list-style-image": chechmarkImage});
         }
-        if (/\d/.test(currPass)) {
+        if (checkPasswordNumber(currPass)) {
             $("#pw_number").css({"list-style-image": chechmarkImage});
         }
-        if (/[a-z]/.test(currPass)) {
+        if (checkPasswordLowerCase(currPass)) {
             $("#pw_under").css({"list-style-image": chechmarkImage});
         }
-        if (/[A-Z]/.test(currPass)) {
+        if (checkPasswordUpperCase(currPass)) {
             $("#pw_upper").css({"list-style-image": chechmarkImage});
         }
     }
@@ -365,7 +324,7 @@
 
     $(document).ready(function () {
         jQuery.validator.addMethod("password", function (value, element) {
-            return this.optional(element) || value.length >= 7 && /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value);
+            return this.optional(element) || checkPassword(value);
         }, [[#{password.error.invalid}]]);
 
         // Check to ensure that username matches
@@ -432,6 +391,7 @@
         });
     });
 </script>
+</div>
 
 </body>
 </html>
