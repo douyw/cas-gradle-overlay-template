@@ -16,7 +16,7 @@ public class InfusionsoftWebflowConfigurer extends AbstractCasWebflowConfigurer 
     private final Action infusionsoftFlowSetupAction;
     private final Action infusionsoftPasswordExpirationEnforcementAction;
 
-    private static final String CAS_MUST_CHANGE_PASS_VIEW = "casMustChangePassView";
+    private static final String CAS_EXPIRED_PASS_VIEW = "casExpiredPassView";
 
     public InfusionsoftWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry, final Action infusionsoftFlowSetupAction, final Action infusionsoftPasswordExpirationEnforcementAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
@@ -32,7 +32,7 @@ public class InfusionsoftWebflowConfigurer extends AbstractCasWebflowConfigurer 
             state.getEntryActionList().add(this.infusionsoftFlowSetupAction);
 
             TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
-            handler.add(AccountPasswordMustChangeException.class, CAS_MUST_CHANGE_PASS_VIEW);
+            handler.add(AccountPasswordMustChangeException.class, CAS_EXPIRED_PASS_VIEW);
 
             loginFlow.getExceptionHandlerSet().add(handler);
 
