@@ -90,13 +90,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String resetPassword(User user) {
+    public String resetPassword(User user, String service) {
         user = updatePasswordRecoveryCode(user.getId());
         String recoveryCode = user.getPasswordRecoveryCode();
 
         log.info("password recovery code " + recoveryCode + " created for user " + user);
 
-        mailService.sendPasswordResetEmail(user);
+        mailService.sendPasswordResetEmail(user, service);
 
         return recoveryCode;
     }

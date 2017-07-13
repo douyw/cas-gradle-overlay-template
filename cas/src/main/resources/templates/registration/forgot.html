@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="../layouts/infusionsoft">
 <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+<!--/*@thymesVar id="service" type="java.lang.String"*/-->
 <!--/*@thymesVar id="username" type="java.lang.String"*/-->
 <!--/*@thymesVar id="supportPhoneNumbers" type="java.util.List<String>"*/-->
 <head>
@@ -8,15 +9,16 @@
     <title>Password Reset</title>
 </head>
 
-<body>
+<body id="forgotPasswordPage">
 <div class="container" layout:fragment="content">
     <div class="row">
         <div class="rounded-box">
-            <img tabindex="-1" th:src="@{/infusionsoft/img/is_logo.svg}" width="159" height="26" class="logo" th:title="#{Infusionsoft}"/>
+            <div tabindex="-1" width="159" height="26" class="logo" th:title="#{Infusionsoft}"></div>
 
             <h2>Password Reset</h2>
 
             <form th:action="@{recover}" method="post" id="forgotPasswordForm" class="form-horizontal" role="form">
+                <input id="service" name="service" type="hidden" th:value="${service}"/>
 
                 <p class="text-error" th:if="${!#strings.isEmpty(error)}">
                     <img tabindex="-1" th:src="@{/infusionsoft/img/ic-exclamation-circle.svg}" width="16" height="16"/>
@@ -35,7 +37,7 @@
                     </div>
                 </div>
             </form>
-            <a th:href="@{/login}">Back to Sign In</a>
+            <a th:href="@{~/login(service=${service})}">Back to Sign In</a>
         </div>
     </div>
     <div class="row">

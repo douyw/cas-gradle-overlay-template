@@ -41,7 +41,7 @@ public interface UserService {
     @Deprecated
     boolean isDuplicateUsername(User user);
 
-    String resetPassword(User user);
+    String resetPassword(User user, String service);
 
     @Deprecated
     Authority findAuthorityByName(String authorityName);

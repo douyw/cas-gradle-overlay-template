@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="../layouts/infusionsoft">
+<!--/*@thymesVar id="service" type="java.lang.String"*/-->
 <!--/*@thymesVar id="recoveryCode" type="java.lang.String"*/-->
 <!--/*@thymesVar id="supportPhoneNumbers" type="java.util.List<String>"*/-->
 <head>
@@ -18,6 +19,7 @@
                 <form th:action="@{reset}" method="post" id="resetPasswordForm" class="form-horizontal">
 
                     <input id="recoveryCode" name="recoveryCode" type="hidden" th:value="${recoveryCode}"/>
+                    <input id="service" name="service" type="hidden" th:value="${service}"/>
 
                     <div class="form-group">
                         <div class="col-md-12">

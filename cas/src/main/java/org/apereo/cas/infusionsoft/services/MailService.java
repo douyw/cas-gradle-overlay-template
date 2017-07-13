@@ -1,5 +1,6 @@
 package org.apereo.cas.infusionsoft.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -91,8 +93,9 @@ public class MailService {
      * Sends an email with a link and password recovery code.
      *
      * @param user user
+     * @param service
      */
-    public void sendPasswordResetEmail(User user) {
+    public void sendPasswordResetEmail(User user, String service) {
         try {
             // we should be passing in a locale here, or be able to determine the user's locale from the user object...
             MimeMessage message = createMessage(user, messageSource.getMessage("email.reset.password.subject", null, Locale.getDefault()));
@@ -100,9 +103,17 @@ public class MailService {
             StringWriter body = new StringWriter();
             Context context = new VelocityContext();
 
-            context.put("user", user);
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(casConfigurationProperties.getServer().getPrefix())
+                    .path("/password/recover")
+                    .queryParam("recoveryCode", user.getPasswordRecoveryCode())
+                    .queryParam("username", user.getUsername());
+            if (StringUtils.isNotBlank(service)) {
+                uriBuilder.queryParam("service", service);
+            }
+            String recoveryUrl = uriBuilder.toUriString();
+
             context.put("code", user.getPasswordRecoveryCode());
-            context.put("serverPrefix", casConfigurationProperties.getServer().getPrefix());
+            context.put("recoveryUrl", recoveryUrl);
             context.put("supportPhoneNumbers", infusionsoftConfigurationProperties.getSupportPhoneNumbers());
 
             velocityEngine.mergeTemplate("/velocity/forgotPasswordEmail.vm", "UTF-8", context, body);
