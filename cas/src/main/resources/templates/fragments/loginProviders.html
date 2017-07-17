@@ -10,6 +10,9 @@
                    th:inline="text"
                    th:title="${entry.name}">
 
+                    <span th:case="saml2" th:remove="tag">
+                        <span class="fa fa-lock"></span> Okta
+                    </span>
                     <span th:case="linkedin2" th:remove="tag">
                         <span class="fa fa-linkedin"></span> LinkedIn
                     </span>
