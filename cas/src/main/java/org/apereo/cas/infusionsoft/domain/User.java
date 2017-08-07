@@ -174,7 +174,7 @@ public class User implements Serializable {
     }
 
     @Transient
-    public String getEmailRegex() {
+    public static String getEmailRegex() {
         return EMAIL_REGEX;
     }
 }

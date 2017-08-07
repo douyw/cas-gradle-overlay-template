@@ -7,24 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class UserEmailValidationTest {
-
-    private User user;
-    private static final String testUsername = "test.user@infusionsoft.com";
-    private static final String testFirstName = "Test";
-    private static final String testLastName = "User";
-
-    @Before
-    public void setupForMethod() {
-        user = new User();
-        user.setId(13L);
-        user.setFirstName(testFirstName);
-        user.setLastName(testLastName);
-        user.setEnabled(true);
-        user.setUsername(testUsername);
-    }
-
     @Test
     public void testUserEmailValidatorOnValidEmailAddresses() throws Exception {
         List<String> validEmailAddresses = ImmutableList.of(
@@ -64,19 +49,22 @@ public class UserEmailValidationTest {
                 "abc..de@insta.com",
                 "abc123..45@insta.com",
                 "abc@insta-.com",
-                "ABC.ABC.ABC.ABC0046@domain.com.com.com",
                 "this@that@this.com");
 
         invalidEmailAddresses.forEach(this::validateInvalidEmailAddress);
     }
 
     private void validateValidEmailAddress(String emailAddress) {
-        boolean isValid = emailAddress.matches(user.getEmailRegex());
+        Pattern userEmailPattern = Pattern.compile(User.getEmailRegex(), Pattern.CASE_INSENSITIVE);
+        boolean isValid = userEmailPattern.matcher(emailAddress).matches();
+
         Assert.assertTrue("This email should be considered invalid: " + emailAddress, isValid);
     }
 
     private void validateInvalidEmailAddress(String emailAddress) {
-        boolean isValid = emailAddress.matches(user.getEmailRegex());
+        Pattern userEmailPattern = Pattern.compile(User.getEmailRegex(), Pattern.CASE_INSENSITIVE);
+        boolean isValid = userEmailPattern.matcher(emailAddress).matches();
+
         Assert.assertTrue("This email should be considered valid: " + emailAddress, !isValid);
     }
 }
