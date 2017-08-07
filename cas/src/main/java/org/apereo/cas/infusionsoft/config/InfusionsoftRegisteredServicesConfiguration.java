@@ -27,7 +27,7 @@ public class InfusionsoftRegisteredServicesConfiguration {
         services.add(serviceCAM());
         services.add(serviceLocalhost());
         services.add(servicePropel());
-        services.add(serviceEssentials());
+        services.add(serviceOptimus());
         services.add(serviceHelpCenter());
         services.add(serviceCRM());
 
@@ -104,8 +104,8 @@ public class InfusionsoftRegisteredServicesConfiguration {
     }
 
     @Bean
-    RegisteredService serviceEssentials() {
-        RegexRegisteredService service = buildService(9, "Essentials", "(mobile|https?)://((diamondback\\.infusion(soft|test))|(is-optimus-web-[^\\./:]+\\.firebaseapp))\\.com(:[0-9]+)?((/.*)|$)", 9);
+    RegisteredService serviceOptimus() {
+        RegexRegisteredService service = buildService(9, "Optimus", "(mobile|https?)://((diamondback\\.infusion(soft|test))|(is-optimus-web-[^\\./:]+\\.firebaseapp)|((propel|optimus)-[^\\./:]+\\.herokuapp))\\.com(:[0-9]+)?((/.*)|$)", 9);
         service.setTheme("cas-theme-infusionsoft-design-2017");
 
         final Map<String, RegisteredServiceProperty> serviceProperties = service.getProperties();
