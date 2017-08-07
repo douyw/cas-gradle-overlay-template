@@ -47,7 +47,7 @@ CAS depends on Account Central, see that project's README for how to build and r
     ```
     Now when you access your flagship app, it will redirect you to `https://signin.infusiontest.com` with a `service` URL parameter. _If you go straight to this URL without the service parameter, you will be logging into Account Central, not your app!_
     
-    If you need to run a local CAS then you need to change `casBaseUrl` in `config/environment/development/security.properties` to `https://devcas.infusiontest.com:7443`
+    If you need to use a local CAS then you need to change `casBaseUrl` in `config/environment/development/security.properties` to `https://devcas.infusiontest.com:7443`
 2. Follow sign-up/registration link to create yourself a user, this will create a record in 'cas.user'. To link this user to the user in your local Core app's DB, place your cas.user.id into (localApp).User as the `GlobalUserId`.
    ```sql
    	UPDATE <localApp>.User SET GlobalUserId=<cas user id> WHERE id=<your local user id>;
