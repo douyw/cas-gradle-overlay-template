@@ -1,6 +1,11 @@
 package org.apereo.cas.infusionsoft.web.controllers;
 
+import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.proc.BadJWEException;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.BadJWTException;
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import org.apereo.cas.api.APIErrorDTO;
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.pac4j.core.context.J2EContext;
@@ -20,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Really simple controller to allow authentication.
@@ -52,6 +59,11 @@ public class JwtController {
                 String decrypted = tokenTicketCipherExecutor.decode(tokenCredentials.getToken());
 
                 if(decrypted != null) {
+                    JWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(decrypted);
+
+                    DefaultJWTClaimsVerifier defaultJWTClaimsVerifier = new DefaultJWTClaimsVerifier();
+                    defaultJWTClaimsVerifier.verify(jwtClaimsSet);
+
                     return new ResponseEntity<>(decrypted, HttpStatus.OK);
                 } else {
                     throw new BadJWEException("Invalid JWE Token");
@@ -59,14 +71,14 @@ public class JwtController {
             } else {
                 throw new BadJWEException("Invalid JWE Token");
             }
-        } catch (CredentialsException | IllegalArgumentException | BadJWEException e) {
-            return logAndReturnError(e, "cas.exception.jwt.invalid", new Object[]{e.getMessage()}, locale, HttpStatus.UNAUTHORIZED);
+        } catch (CredentialsException | IllegalArgumentException | BadJWEException | BadJWTException | ParseException e) {
+            return logAndReturnError(e, "cas.exception.jwt.invalid", locale, HttpStatus.UNAUTHORIZED);
         }
 
     }
 
-    private ResponseEntity<APIErrorDTO> logAndReturnError(Exception e, String code, Object[] args, Locale locale, HttpStatus httpStatus) {
-        String errorMessage = messageSource.getMessage(code, args, locale);
+    private ResponseEntity<APIErrorDTO> logAndReturnError(Exception e, String code, Locale locale, HttpStatus httpStatus) {
+        String errorMessage = messageSource.getMessage(code, null, locale);
         log.error(errorMessage, e);
         return new ResponseEntity<>(new APIErrorDTO(code, errorMessage), httpStatus);
     }
