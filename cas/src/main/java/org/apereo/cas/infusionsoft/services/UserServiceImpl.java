@@ -1,5 +1,10 @@
 package org.apereo.cas.infusionsoft.services;
 
+import com.infusionsoft.account.sdk.UserApi;
+import com.infusionsoft.account.sdk.dto.UserCreate;
+import com.infusionsoft.account.sdk.dto.UserUpdate;
+import feign.FeignException;
+import feign.RetryableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +19,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +36,10 @@ public class UserServiceImpl implements UserService {
     private MailService mailService;
     private PasswordService passwordService;
     private UserDAO userDAO;
+
+    @Autowired
+    private AccountApiService accountApiService;
+
     private UserAccountDAO userAccountDAO;
     private UserIdentityDAO userIdentityDAO;
     private InfusionsoftConfigurationProperties infusionsoftConfigurationProperties;
@@ -68,8 +78,70 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(ValidationUtils.removeAllHtmlTags(user.getFirstName()));
         user.setLastName(ValidationUtils.removeAllHtmlTags(user.getLastName()));
 
-        return userDAO.save(user);
+        return saveUserInternal(user);
+
     }
+    private User saveUserInternal(User user) {
+        user = userDAO.save(user);
+
+        try {
+            syncUserWithAccountApi(user);
+        } catch (Exception e) {
+            log.error("Failed to sync user " + user.getId().toString() + " with account API", e);
+        }
+        return user;
+    }
+
+    private void syncUserWithAccountApi(User user) {
+        final String userId = Objects.toString(user.getId(), null);
+        final String firstName = user.getFirstName();
+        final String lastName = user.getLastName();
+        final String fullName = String.format("%s %s", firstName, lastName);
+
+        final UserApi userApi = accountApiService.getUserApi();
+        try {
+            userApi.retrieveUser(userId);
+            final UserUpdate userUpdate = createUserUpdate(user, firstName, lastName, fullName);
+            userApi.updateUser(userId, userUpdate);
+        } catch (RetryableException exception) {
+            final FeignException exceptionCause = (FeignException) exception.getCause();
+            if (exceptionCause.status() != 404) {
+                throw exception;
+            }
+
+            final UserCreate userInput = createUserInput(user, userId, firstName, lastName, fullName);
+            userApi.createUser(userInput);
+        }
+        log.debug("Synced user " + userId + " with the account API");
+    }
+
+    private UserCreate createUserInput(User user, final String userId, String firstName, String lastName, String fullName) {
+        final UserCreate userInput = new UserCreate(){
+            private String legacyId = userId;
+
+            public String getLegacyId() {
+                return legacyId;
+            }
+        };
+
+        userInput.setUsername(StringUtils.lowerCase(user.getUsername()));
+        userInput.setGivenName(firstName);
+        userInput.setFamilyName(lastName);
+        userInput.setFullName(fullName);
+        userInput.setEnabled(user.isEnabled());
+        return userInput;
+    }
+
+    private UserUpdate createUserUpdate(User user, String firstName, String lastName, String fullName) {
+        final UserUpdate userUpdate = new UserUpdate();
+        userUpdate.setUsername(StringUtils.lowerCase(user.getUsername()));
+        userUpdate.setGivenName(firstName);
+        userUpdate.setFamilyName(lastName);
+        userUpdate.setFullName(fullName);
+        userUpdate.setEnabled(user.isEnabled());
+        return userUpdate;
+    }
+
 
     @Override
     public User createUser(User user, String plainTextPassword) throws InfusionsoftValidationException {
@@ -134,7 +206,7 @@ public class UserServiceImpl implements UserService {
         // TODO: use UTC date here
         user.setPasswordRecoveryCodeCreatedTime(new DateTime());
 
-        return userDAO.save(user);
+        return  saveUserInternal(user);
     }
 
     @Override
@@ -148,7 +220,7 @@ public class UserServiceImpl implements UserService {
             user.setPasswordRecoveryCodeCreatedTime(null);
 
             log.info("Cleared password recovery code for user " + user);
-            return userDAO.save(user);
+            return  saveUserInternal(user);
         }
     }
 
