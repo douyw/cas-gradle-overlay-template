@@ -31,17 +31,27 @@ public class AccountApiService {
         }
     }
 
-    //public AccountApi getAccountApi() { return accountApiStandaloneModule.accountApi(); }
+    public AccountApi getAccountApi() {
+        return accountApiStandaloneModule.accountApi();
+    }
 
-    // public EditionApi getEditionApi() { return accountApiStandaloneModule.editionApi(); }
+    public EditionApi getEditionApi() {
+        return accountApiStandaloneModule.editionApi();
+    }
 
-    //public OrganizationApi getOrganizationApi() { return accountApiStandaloneModule.organizationApi(); }
+    public OrganizationApi getOrganizationApi() {
+        return accountApiStandaloneModule.organizationApi();
+    }
 
-    //public OrganizationUserApi getOrganizationUserApi() { return accountApiStandaloneModule.organizationUserApi(); }
+    public OrganizationUserApi getOrganizationUserApi() {
+        return accountApiStandaloneModule.organizationUserApi();
+    }
 
     public UserApi getUserApi() {
         return accountApiStandaloneModule.userApi();
     }
 
-    //public UserAccountApi getUserAccountApi() { return accountApiStandaloneModule.userAccountApi(); }
+    public UserAccountApi getUserAccountApi() {
+        return accountApiStandaloneModule.userAccountApi();
+    }
 }
