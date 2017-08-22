@@ -85,14 +85,14 @@ public class UserServiceImpl implements UserService {
         user = userDAO.save(user);
 
         try {
-            syncUserWithAccountApi(user);
+            saveUserWithAccountApi(user);
         } catch (Exception e) {
             log.error("Failed to sync user " + user.getId().toString() + " with account API", e);
         }
         return user;
     }
 
-    private void syncUserWithAccountApi(User user) {
+    private void saveUserWithAccountApi(User user) {
         final String userId = Objects.toString(user.getId(), null);
         final String firstName = user.getFirstName();
         final String lastName = user.getLastName();
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
             final UserCreate userInput = createUserInput(user, userId, firstName, lastName, fullName);
             userApi.createUser(userInput);
         }
-        log.debug("Synced user " + userId + " with the account API");
+        log.debug("Saved user " + userId + " with the Account API");
     }
 
     private UserCreate createUserInput(User user, final String userId, String firstName, String lastName, String fullName) {
