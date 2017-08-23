@@ -12,7 +12,6 @@ import org.apereo.cas.infusionsoft.config.properties.InfusionsoftConfigurationPr
 import org.apereo.cas.infusionsoft.dao.*;
 import org.apereo.cas.infusionsoft.services.*;
 import org.apereo.cas.infusionsoft.support.UserAccountTransformer;
-import org.apereo.cas.infusionsoft.web.controllers.PasswordCheckController;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +27,9 @@ public class InfusionsoftCasConfiguration implements AuthenticationEventExecutio
 
     @Autowired
     private AuthorityDAO authorityDAO;
+
+    @Autowired
+    private AccountApiUserService accountApiUserService;
 
     @Autowired
     private InfusionsoftConfigurationProperties infusionsoftConfigurationProperties;
@@ -101,7 +103,7 @@ public class InfusionsoftCasConfiguration implements AuthenticationEventExecutio
 
     @Bean
     public UserService userService() {
-        return new UserServiceImpl(userAccountTransformer(), authorityDAO, loginAttemptDAO, mailService, passwordService(), userDAO, userAccountDAO, userIdentityDAO, infusionsoftConfigurationProperties);
+        return new UserServiceImpl(accountApiUserService, authorityDAO, infusionsoftConfigurationProperties, loginAttemptDAO, mailService, passwordService(), userAccountDAO, userAccountTransformer(), userDAO, userIdentityDAO);
     }
 
     @Override

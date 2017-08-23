@@ -1,33 +1,26 @@
 package org.apereo.cas.infusionsoft.services;
 
+import com.google.common.base.Preconditions;
 import com.infusionsoft.account.sdk.*;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.infusionsoft.config.properties.GoogleServiceConfigurationProperties;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
-@Service
 public class AccountApiService {
-    @Value("${infusionsoft.account.api.env}")
-    private String environment;
 
-    @Autowired
-    private GoogleCredentialService googleCredentialService;
+    private static final String CALLER_NAME = "CAS";
 
-    @Autowired
-    private BuildProperties buildProperties;
+    private final AccountApiStandaloneModule accountApiStandaloneModule;
 
-    protected AccountApiStandaloneModule accountApiStandaloneModule;
+    public AccountApiService(BuildProperties buildProperties, GoogleCredentialService googleCredentialService, GoogleServiceConfigurationProperties accountApiConfigurationProperties) {
+        Preconditions.checkNotNull(buildProperties);
+        Preconditions.checkNotNull(googleCredentialService);
+        final String environment = accountApiConfigurationProperties.getEnv();
 
-    @PostConstruct
-    public void init() {
         if (StringUtils.equalsIgnoreCase(environment, "local")) {
-            accountApiStandaloneModule = AccountApiStandaloneModule.configuredLocalModule(googleCredentialService.getGoogleCredential(),"CAS", buildProperties.getVersion(),"");
+            accountApiStandaloneModule = AccountApiStandaloneModule.configuredLocalModule(googleCredentialService.getCredential(), CALLER_NAME, buildProperties.getVersion(), "");
         } else {
-            accountApiStandaloneModule = AccountApiStandaloneModule.configuredModule(googleCredentialService.getGoogleCredential(), environment, buildProperties.getVersion(),"");
+            accountApiStandaloneModule = AccountApiStandaloneModule.configuredModule(googleCredentialService.getCredential(), environment, CALLER_NAME, buildProperties.getVersion(), "");
         }
     }
 
@@ -54,4 +47,5 @@ public class AccountApiService {
     public UserAccountApi getUserAccountApi() {
         return accountApiStandaloneModule.userAccountApi();
     }
+
 }

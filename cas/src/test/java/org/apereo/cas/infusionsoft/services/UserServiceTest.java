@@ -22,6 +22,9 @@ public class UserServiceTest {
     private UserAccountTransformer userAccountTransformer;
 
     @Mock
+    private AccountApiUserService accountApiUserService;
+
+    @Mock
     private AuthorityDAO authorityDAO;
 
     @Mock
@@ -60,7 +63,7 @@ public class UserServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        serviceToTest = new UserServiceImpl(userAccountTransformer, authorityDAO, loginAttemptDAO, mailService, passwordService, userDAO, userAccountDAO, userIdentityDAO, infusionsoftConfigurationProperties);
+        serviceToTest = new UserServiceImpl(accountApiUserService, authorityDAO, infusionsoftConfigurationProperties, loginAttemptDAO, mailService, passwordService, userAccountDAO, userAccountTransformer, userDAO, userIdentityDAO);
 
         when(userDAO.findOne(user.getId())).thenReturn(user);
         when(userDAO.findByUsername(testUsername)).thenReturn(user);

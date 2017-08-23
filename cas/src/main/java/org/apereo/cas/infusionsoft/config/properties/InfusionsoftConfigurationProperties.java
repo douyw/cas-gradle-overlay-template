@@ -21,6 +21,9 @@ public class InfusionsoftConfigurationProperties {
     private HostConfigurationProperties customerhub = new HostConfigurationProperties();
 
     @NestedConfigurationProperty
+    private GoogleConfigurationProperties google = new GoogleConfigurationProperties();
+
+    @NestedConfigurationProperty
     private GraphiteConfigurationProperties graphite = new GraphiteConfigurationProperties();
 
     @NestedConfigurationProperty
@@ -71,6 +74,14 @@ public class InfusionsoftConfigurationProperties {
 
     public void setCustomerhub(HostConfigurationProperties customerhub) {
         this.customerhub = customerhub;
+    }
+
+    public GoogleConfigurationProperties getGoogle() {
+        return google;
+    }
+
+    public void setGoogle(GoogleConfigurationProperties google) {
+        this.google = google;
     }
 
     public GraphiteConfigurationProperties getGraphite() {
