@@ -50,6 +50,11 @@ public class UserServiceTest {
     private static final String testFirstName = "Test";
     private static final String testLastName = "User";
 
+    private User newUser;
+    private static final String newUsername = "new.user@infusionsoft.com";
+    private static final String newFirstName = "New";
+    private static final String newLastName = "User";
+
     @Before
     public void setupForMethod() {
         user = new User();
@@ -58,6 +63,13 @@ public class UserServiceTest {
         user.setLastName(testLastName);
         user.setEnabled(true);
         user.setUsername(testUsername);
+
+        newUser = new User();
+        newUser.setId(15L);
+        newUser.setFirstName(newFirstName);
+        newUser.setLastName(newLastName);
+        newUser.setEnabled(true);
+        newUser.setUsername(newUsername);
 
         InfusionsoftConfigurationProperties infusionsoftConfigurationProperties = new InfusionsoftConfigurationProperties();
 
@@ -69,9 +81,22 @@ public class UserServiceTest {
         when(userDAO.findByUsername(testUsername)).thenReturn(user);
         when(userDAO.findByUsernameAndEnabled(testUsername, true)).thenReturn(user);
         when(userDAO.save(user)).thenReturn(user);
+        when(accountApiUserService.save(user)).thenReturn(user);
     }
 
     // TODO: a bunch of other functions in UserService still have no testing at all
+    @Test
+    public void testUserSaveCallsAccountAPICode() throws Exception {
+        User returnedUser = serviceToTest.saveUser(user);
+        // Make sure save was called and with the right user
+        Assert.assertSame(returnedUser, user);
+        verify(accountApiUserService, times(1)).save(returnedUser);
+        // Nothing else should have changed
+        Assert.assertEquals(returnedUser.getUsername(), testUsername);
+        Assert.assertEquals(returnedUser.getFirstName(), testFirstName);
+        Assert.assertEquals(returnedUser.getLastName(), testLastName);
+        Assert.assertTrue(returnedUser.isEnabled());
+    }
 
     @Test
     public void testUpdatePasswordRecoveryCode() throws Exception {

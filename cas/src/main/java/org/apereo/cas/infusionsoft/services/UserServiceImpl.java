@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
         this.userAccountDAO = userAccountDAO;
         this.userIdentityDAO = userIdentityDAO;
         this.infusionsoftConfigurationProperties = infusionsoftConfigurationProperties;
+        this.accountApiUserService = accountApiUserService;
     }
 
     @Override
