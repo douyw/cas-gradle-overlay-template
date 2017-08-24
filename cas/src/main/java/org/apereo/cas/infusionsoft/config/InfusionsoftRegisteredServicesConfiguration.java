@@ -36,37 +36,37 @@ public class InfusionsoftRegisteredServicesConfiguration {
 
     @Bean
     RegisteredService serviceCAS() {
-        return buildService(1, "CAS", "https://(signin|devcas)\\.infusion(test|soft)\\.com(:[0-9]+)?((/.*)|$)", 1);
+        return buildService(1, "CAS", "https://(signin|devcas)\\.infusion(test|soft)\\.com(:[0-9]+)?(([/\\?].*)|$)", 1);
     }
 
     @Bean
     RegisteredService serviceAccountCentral() {
-        return buildService(2, "Account Central", "https://(accounts|devaccounts)\\.infusion(test|soft)\\.com(:[0-9]+)?((/.*)|$)", 2);
+        return buildService(2, "Account Central", "https://(accounts|devaccounts)\\.infusion(test|soft)\\.com(:[0-9]+)?(([/\\?].*)|$)", 2);
     }
 
     @Bean
     RegisteredService serviceCustomerHub() {
-        return buildService(3, "CustomerHub", "((https://.+\\.customerhub(\\.net|test\\.com))|(http://.+\\.customerhub.(dev|local)))(:[0-9]+)?((/.*)|$)", 3);
+        return buildService(3, "CustomerHub", "((https://.+\\.customerhub(\\.net|test\\.com))|(http://.+\\.customerhub.(dev|local)))(:[0-9]+)?(([/\\?].*)|$)", 3);
     }
 
     @Bean
     RegisteredService serviceMarketplaceAPI() {
-        return buildService(4, "Marketplace API", "https://marketplace3(dev)?\\.infusion(soft|test)\\.com(:[0-9]+)?((/.*)|$)", 4);
+        return buildService(4, "Marketplace API", "https://marketplace3(dev)?\\.infusion(soft|test)\\.com(:[0-9]+)?(([/\\?].*)|$)", 4);
     }
 
     @Bean
     RegisteredService serviceMarketplaceUI() {
-        return buildService(5, "Marketplace UI", "https?://marketplace(3(dev)?ui)?\\.infusion(soft|test)\\.com(:[0-9]+)?((/.*)|$)", 5);
+        return buildService(5, "Marketplace UI", "https?://marketplace(3(dev)?ui)?\\.infusion(soft|test)\\.com(:[0-9]+)?(([/\\?].*)|$)", 5);
     }
 
     @Bean
     RegisteredService serviceCAM() {
-        return buildService(6, "CAM", "https://cam\\.infusion(soft|test)\\.com((/.*)|$)", 6);
+        return buildService(6, "CAM", "https://cam\\.infusion(soft|test)\\.com(([/\\?].*)|$)", 6);
     }
 
     @Bean
     RegisteredService serviceLocalhost() {
-        RegexRegisteredService service =  buildService(7, "Localhost", "https?://localhost(:[0-9]+)?((/.*)|$)", 7);
+        RegexRegisteredService service =  buildService(7, "Localhost", "https?://localhost(:[0-9]+)?(([/\\?].*)|$)", 7);
 
         service.setAccessStrategy(new InfusionsoftRegisteredServiceAccessStrategy(true, true, false, true));
         service.setTheme("cas-theme-infusionsoft-design-2017");
@@ -86,7 +86,7 @@ public class InfusionsoftRegisteredServicesConfiguration {
 
     @Bean
     RegisteredService servicePropel() {
-        RegexRegisteredService service = buildService(8, "Propel", "(mobile|https?)://([^\\.]+\\.goldfishapp\\.co|propel\\.infusion(soft|test)\\.com)(:[0-9]+)?((/.*)|$)", 8);
+        RegexRegisteredService service = buildService(8, "Propel", "(mobile|https?)://([^\\.]+\\.goldfishapp\\.co|propel\\.infusion(soft|test)\\.com)(:[0-9]+)?(([/\\?].*)|$)", 8);
         service.setAccessStrategy(new InfusionsoftRegisteredServiceAccessStrategy(true, true, false, false));
         service.setTheme("cas-theme-infusionsoft-design-2017");
 
@@ -105,7 +105,7 @@ public class InfusionsoftRegisteredServicesConfiguration {
 
     @Bean
     RegisteredService serviceOptimus() {
-        RegexRegisteredService service = buildService(9, "Optimus", "(mobile|https?)://((diamondback\\.infusion(soft|test))|(is-optimus-web-[^\\./:]+\\.firebaseapp)|((propel|optimus)-[^\\./:]+\\.herokuapp))\\.com(:[0-9]+)?((/.*)|$)", 9);
+        RegexRegisteredService service = buildService(9, "Optimus", "(mobile|https?)://((diamondback\\.infusion(soft|test))|(is-optimus-web-[^\\./:]+\\.firebaseapp)|((propel|optimus)-[^\\./:]+\\.herokuapp))\\.com(:[0-9]+)?(([/\\?].*)|$)", 9);
         service.setTheme("cas-theme-infusionsoft-design-2017");
 
         final Map<String, RegisteredServiceProperty> serviceProperties = service.getProperties();
@@ -123,13 +123,13 @@ public class InfusionsoftRegisteredServicesConfiguration {
 
     @Bean
     RegisteredService serviceHelpCenter() {
-        return buildService(10, "Help Center", "https?://(help(center)?\\.infusionsoft|dev-help-center\\.gotpantheon)\\.com/.*", 10);
+        return buildService(10, "Help Center", "https?://(help(center)?\\.infusionsoft|dev-help-center\\.gotpantheon)\\.com(([/\\?].*)|$)", 10);
     }
 
     @Bean
     RegisteredService serviceCRM() {
         // Must be last, because it's a wildcard on infusionsoft/test.com
-        final RegexRegisteredService service = buildService(9999, "Infusionsoft CRM", "https://.+\\.infusion(soft|test)\\.com(:[0-9]+)?((/.*)|$)", 9999);
+        final RegexRegisteredService service = buildService(9999, "Infusionsoft CRM", "https://.+\\.infusion(soft|test)\\.com(:[0-9]+)?(([/\\?].*)|$)", 9999);
 
         DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         property.getValues().add("/Affiliate/");
