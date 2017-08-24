@@ -87,15 +87,25 @@ public class RegistrationController {
      * Builds the model with attributes that are required for displaying the createInfusionsoftId page.
      */
     private void buildModelForCreateInfusionsoftId(HttpServletRequest request, Model model, String returnUrl, String userToken, String firstName, String lastName, String username, boolean skipWelcomeEmail, User user) {
-        if (getServiceByUrl(returnUrl) != null) {
-            model.addAttribute("returnUrl", returnUrl);
-        }
+      final RegisteredService registeredService = getServiceByUrl(returnUrl);
+      boolean useAlternateLogin = false;
 
+      if (registeredService != null) {
+        model.addAttribute("returnUrl", returnUrl);
+        final String theme = registeredService.getTheme();
+        useAlternateLogin = !StringUtils.equals(theme, "infusionsoft");
+      }
+
+      if (useAlternateLogin) {
+        model.addAttribute("loginUrl", generateBasicLoginUrl(returnUrl));
+      } else {
         model.addAttribute("loginUrl", generateLinkToExistingLoginUrl(request, returnUrl, userToken, firstName, lastName, username, skipWelcomeEmail));
-        model.addAttribute("userToken", userToken);
-        model.addAttribute("user", user);
-        model.addAttribute("securityQuestions", securityQuestionService.fetchAllEnabled());
-        model.addAttribute("skipWelcomeEmail", skipWelcomeEmail);
+      }
+
+      model.addAttribute("userToken", userToken);
+      model.addAttribute("user", user);
+      model.addAttribute("securityQuestions", securityQuestionService.fetchAllEnabled());
+      model.addAttribute("skipWelcomeEmail", skipWelcomeEmail);
     }
 
     /**
@@ -177,6 +187,15 @@ public class RegistrationController {
                 .queryParam("renew", true) // Note: this bypasses SSO, forcing a login
                 .queryParam("registration", generateRegistrationUrl(returnUrl, userToken, firstName, lastName, username, skipWelcomeEmail));
         return uriBuilder.toUriString();
+    }
+
+    /**
+     * Creates a link to the login page that only contains a service parameter
+     */
+    private String generateBasicLoginUrl(String returnUrl) {
+      UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(casConfigurationProperties.getServer().getLoginUrl())
+          .queryParam("service", returnUrl);
+      return uriBuilder.toUriString();
     }
 
     /**
