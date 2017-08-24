@@ -4,13 +4,14 @@ import com.infusionsoft.account.sdk.UserApi;
 import feign.FeignException;
 import feign.RetryableException;
 import org.apereo.cas.infusionsoft.domain.User;
-import com.infusionsoft.account.sdk.UserApiMock;
 import com.infusionsoft.account.sdk.dto.UserUpdate;
 import com.infusionsoft.account.sdk.dto.UserCreate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.doThrow;
 
@@ -18,16 +19,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class AccountApiUserServiceTest {
-
+    @InjectMocks
     private AccountApiUserService serviceToTest;
-
     @Mock
     private AccountApiService accountApiService;
-
     @Mock
-    private UserApi myUserApi;
-
+    private UserApi userApi;
     @Mock
     private RetryableException myException;
     @Mock
@@ -38,15 +37,12 @@ public class AccountApiUserServiceTest {
     private static final String testLastName = "User";
     private static final String testFullName = "Test User";
 
-
     @Before
     public void setupForMethod() {
-
-        myUserApi = new UserApiMock();
         myException = new RetryableException("User not found", null);
-
         MockitoAnnotations.initMocks(this);
-        when(accountApiService.getUserApi()).thenReturn(myUserApi);
+        userApi = Mockito.mock(UserApi.class);
+        when(accountApiService.getUserApi()).thenReturn(userApi);
         serviceToTest = new AccountApiUserService(accountApiService);
     }
 
@@ -73,8 +69,8 @@ public class AccountApiUserServiceTest {
         dtoUser = new com.infusionsoft.account.sdk.dto.User();
         dtoUser.setId(user.getId().toString());
 
-        doThrow(myException).when(myUserApi).retrieveUser("14");
-        when(myUserApi.createUser(userCreate)).thenReturn(dtoUser);
+        doThrow(myException).when(userApi).retrieveUser("14");
+        when(userApi.createUser(userCreate)).thenReturn(dtoUser);
 
         // Set up the behavior for the case where a new user causes code to
         // execute an exception path.  Have to set up the correct exception and cause
@@ -86,7 +82,7 @@ public class AccountApiUserServiceTest {
 
         // Make sure save was called and with the right user
         Assert.assertSame(returnedUser, user);
-        verify(myUserApi, times(1)).createUser(userCreate);
+        verify(userApi, times(1)).createUser(userCreate);
         // Nothing else should have changed
         Assert.assertEquals(returnedUser.getUsername(), testUsername);
         Assert.assertEquals(returnedUser.getFirstName(), testFirstName);
@@ -116,13 +112,13 @@ public class AccountApiUserServiceTest {
         dtoUser = new com.infusionsoft.account.sdk.dto.User();
         dtoUser.setId(user.getId().toString());
 
-        when(myUserApi.updateUser("13", userUpdate)).thenReturn(dtoUser);
+        when(userApi.updateUser("13", userUpdate)).thenReturn(dtoUser);
 
         User returnedUser = serviceToTest.save(user);
 
         // Make sure save was called and with the right user
         Assert.assertSame(returnedUser, user);
-        verify(myUserApi, times(1)).updateUser("13", userUpdate);
+        verify(userApi, times(1)).updateUser("13", userUpdate);
         // Nothing else should have changed
         Assert.assertEquals(returnedUser.getUsername(), testUsername);
         Assert.assertEquals(returnedUser.getFirstName(), testFirstName);
@@ -140,7 +136,7 @@ public class AccountApiUserServiceTest {
         user.setEnabled(true);
         user.setUsername(testUsername);
 
-        doThrow(myException).when(myUserApi).retrieveUser("14");
+        doThrow(myException).when(userApi).retrieveUser("14");
 
         // Set up the behavior for the case where a new user causes code to
         // execute an exception path.  Have to set up the correct exception and cause
